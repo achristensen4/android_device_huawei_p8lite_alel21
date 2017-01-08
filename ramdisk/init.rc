@@ -20,8 +20,6 @@ import /init.${ro.boardid.product}.rc
 on early-init
     write /proc/1/oom_score_adj -1000
 
-    write /sys/fs/selinux/checkreqprot 0
-
     setcon u:r:init:s0
 
     restorecon /adb_keys
@@ -83,7 +81,7 @@ on init
     mount cgroup none /dev/memcg memory
 
     write /proc/sys/kernel/panic_on_oops 1
-    write /proc/sys/kernel/hung_task_timeout_secs 0
+    write /proc/sys/kernel/hung_task_timeout_secs 30
     write /proc/cpu/alignment 4
     write /proc/sys/kernel/sched_latency_ns 10000000
     write /proc/sys/kernel/sched_wakeup_granularity_ns 2000000
@@ -92,8 +90,6 @@ on init
     write /proc/sys/kernel/randomize_va_space 2
     write /proc/sys/kernel/kptr_restrict 2
     write /proc/sys/vm/mmap_min_addr 32768
-    write /proc/sys/net/ipv4/ping_group_range "0 2147483647"
-    write /proc/sys/net/unix/max_dgram_qlen 300
     write /proc/sys/kernel/sched_rt_runtime_us 950000
     write /proc/sys/kernel/sched_rt_period_us 1000000
 
@@ -361,9 +357,9 @@ on property:sys.init_log_level=*
     loglevel ${sys.init_log_level}
 
 on charger
-    mount_doul vfat-ext4 /dev/block/platform/hi_mci.0/by-name/splash2 /splash2 wait rw nosuid nodev context=u:object_r:splash2_data_file:s0
+    mount_doul vfat-ext4 /dev/block/platform/hi_mci.0/by-name/splash2 /splash2 wait rw nosuid nodev
     mount ext4 /dev/block/platform/hi_mci.0/by-name/system /system ro
-    mount ext4 /dev/block/platform/hi_mci.0/by-name/userdata /data nosuid nodev noatime wait crypt discard,noauto_da_alloc,mblk_io_submit,data=ordered
+    mount ext4 /dev/block/platform/hi_mci.0/by-name/userdata /data nosuid nodev noatime wait
     class_start charger
     start hw_ueventd
 
@@ -424,7 +420,6 @@ service charger /sbin/healthd -h
 service console /system/bin/sh
     class core
     console
-    disabled
     user shell
     group shell log
     seclabel u:r:shell:s0
@@ -435,7 +430,6 @@ on property:ro.debuggable=1
 service adbd /sbin/adbd --root_seclabel=u:r:su:s0
     class core
     socket adbd stream 660 system system
-    disabled
     seclabel u:r:adbd:s0
 
 on property:ro.kernel.qemu=1
@@ -443,7 +437,6 @@ on property:ro.kernel.qemu=1
 
 service usbshell /system/bin/usbshell
     class core
-    disabled
 
 service lmkd /system/bin/lmkd
     class core
@@ -464,7 +457,6 @@ service servicemanager /system/bin/servicemanager
 service vold /system/bin/vold
     class core
     socket vold stream 0660 root mount
-    ioprio be 2
 
 service netd /system/bin/netd
     class main
@@ -487,7 +479,6 @@ service hdmi-daemon /system/bin/hdmi_daemon
     class main
     group system
     socket hdmi_daemon stream 660 root system graphics
-    disabled
 
 service surfaceflinger /system/bin/surfaceflinger
     class core
@@ -513,21 +504,17 @@ service media /system/bin/mediaserver
     class main
     user media
     group audio camera inet net_bt net_bt_admin net_bw_acct drmrpc mediadrm system dsm shell sdcard_rw sdcard_r
-    ioprio rt 4
 
 service defaultcrypto /system/bin/vdc --wait cryptfs mountdefaultencrypted
-    disabled
     oneshot
 
 service encrypt /system/bin/vdc --wait cryptfs enablecrypto inplace default
-    disabled
     oneshot
 
 service bootanim /system/bin/bootanimation
     class core
     user graphics
     group graphics audio
-    disabled
     oneshot
 
 service installd /system/bin/installd
@@ -543,7 +530,6 @@ service racoon /system/bin/racoon
     class main
     socket racoon stream 600 system system
     group vpn net_admin inet
-    disabled
     oneshot
 
 service mtpd /system/bin/mtpd
@@ -551,7 +537,6 @@ service mtpd /system/bin/mtpd
     socket mtpd stream 600 system system
     user vpn
     group vpn net_admin inet net_raw
-    disabled
     oneshot
 
 service keystore /system/bin/keystore /data/misc/keystore
@@ -562,7 +547,6 @@ service keystore /system/bin/keystore /data/misc/keystore
 service dumpstate /system/bin/dumpstate -s
     class main
     socket dumpstate stream 0660 shell log
-    disabled
     oneshot
 
 service mdnsd /system/bin/mdnsd
@@ -570,17 +554,14 @@ service mdnsd /system/bin/mdnsd
     user mdnsr
     group inet net_raw
     socket mdnsd stream 0660 mdnsr inet
-    disabled
     oneshot
 
 service pre-recovery /system/bin/uncrypt
     class main
-    disabled
     oneshot
 
 service drop_caches /system/bin/sh -c "echo 3 > /proc/sys/vm/drop_caches"
     class main
-    disabled
     oneshot
 
 service immvibed /system/bin/immvibed -p 99 -u 1000
