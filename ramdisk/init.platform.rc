@@ -1,7 +1,5 @@
 on early-init
 
-write /sys/block/mmcblk0/queue/nr_requests 256
-
 on init
 
     mkdir /dev/frz
@@ -87,11 +85,9 @@ on property:bastet.service.enable=true
     start bastetd
 
 service ioinfoservice /system/bin/ioinfoservice
-    disabled
     class main
 
 service jankservice /system/bin/jankservice
-    disabled
     class main
 
 on property:persist.sys.jankenable=true
@@ -103,20 +99,16 @@ on property:persist.sys.jankenable=false
     stop ioinfoservice
 
 service fuse_sdcard1rw /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard1 /storage/sdcard1
-   class late_start
-   disabled
+   class main
 
    service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
-   class late_start
-   disabled
+   class main
 
    service fuse_usbotg /system/bin/sdcard -u 1023 -g 1023 -w 1015 -d /mnt/media_rw/usbotg /storage/usbotg
-   class late_start
-   disabled
+   class main
 
 service preparesdservice /system/bin/vdc volume storagetosd
    class main
-   disabled
    oneshot
 
 on property:persist.sys.primarysd=*
@@ -130,96 +122,84 @@ service logserver /system/bin/logserver
     seclabel u:r:logserver:s0
 
 service logctl_service /sbin/logctl_service -m 1
-    class late_start
+    class main
     user root
     group system
     oneshot
     seclabel u:r:hisilogcat:s0
 
 service logcat_service /sbin/logctl_service -m 1 -t 1
-    class late_start
+    class main
     user root
     group system
     oneshot
     seclabel u:r:hisilogcat:s0
 
 service fac_log_service /system/bin/factory_log_service -m 1
-    class late_start
+    class main
     user root
     group system
-    disabled
     oneshot
     seclabel u:r:hisilogcat:s0
 
 service applogcat /system/bin/logcat -v threadtime -r4096 -z 10 -n 5 -f /data/android_logs/applogcat-log
-    class late_start
+    class main
     user root
     group system
-    disabled
     seclabel u:r:hisilogcat:s0
 
 service rillogcat /system/bin/logcat -b radio -v threadtime -r4096 -z 5 -n 5 -f /data/android_logs/rillogcat-log
-    class late_start
+    class main
     user root
     group system
-    disabled
     seclabel u:r:hisilogcat:s0
 
 service kmsglogcat /sbin/kmsgcat -r 4096 -z 5 -n 5 -f /data/android_logs/kmsgcat-log
-    class late_start
+    class main
     user root
     group system
-    disabled
     seclabel u:r:hisilogcat:s0
 
 service inputlogcat /system/bin/eventcat -lrt -k 1024 -z 8 -m 10 -f /data/android_logs/input-log
-    class late_start
+    class main
     user root
     group system
-    disabled
     seclabel u:r:hisilogcat:s0
 
 service chargelogcat /system/bin/chargelogcat -r 4096 -n 5 -z 5 -t 5 -p /data/android_logs/
-    class late_start
+    class main
     user root
     group system
-    disabled
     seclabel u:r:hisilogcat:s0
 
 service sleeplogcat /system/bin/sleeplogcat -t 10 -p /data/android_logs/
-    class late_start
+    class main
     user root
     group system
-    disabled
     seclabel u:r:hisilogcat:s0
 
 service modemlogcat /system/bin/modemlogcat_lte -l
     class main
     user root
     group system
-    disabled
     oneshot
 
 service modematserver /system/bin/modemlogcat_lte -f hidp
     class main
     user root
     group system
-    disabled
     oneshot
 
 service hw_cdma_service /system/bin/hw_cdmamodem_service /dev/acm_cdma_log /dev/ttySPI3 /dev/ttySPI1
     class main
     user root
-    disabled
 
 service ddrtest /system/bin/do_ddrtest
     user root
-    disabled
     oneshot
 
 service stop_ddrtest /system/bin/do_ddrtest
     user root
-    disabled
     oneshot
 
 service thermal-daemon /system/bin/thermal-daemon
@@ -233,7 +213,7 @@ service hwpged /system/bin/hwpged
     user root
 
 service chargemonitor /system/bin/chargemonitor
-    class late_start
+    class main
     user root
     group system
     seclabel u:r:hisilogcat:s0
@@ -249,10 +229,9 @@ on property:debug.rt.ddr.test=4
     start stop_ddrtest
 
 service mapper /system/bin/sh /system/bin/mappersh
-    class late_start
+    class main
     user root
     group system
-    disabled
 
 on property:persist.sys.huawei.debug.on=*
     restart logcat_service
@@ -261,4 +240,3 @@ service bastetd /system/bin/bastetd
     class main
     user root
     group root
-    disabled
