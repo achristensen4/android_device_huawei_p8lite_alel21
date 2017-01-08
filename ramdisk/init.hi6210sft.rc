@@ -31,7 +31,7 @@ on charger
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor optdemand
 
 on fs
-    setprop ro.crypto.fuse_sdcard true
+    setprop ro.crypto.fuse_sdcard false
     symlink /splash2/fac_log /data/log/fac_log
     mount ext4 /dev/block/mmcblk0p34 /cache nosuid nodev noatime wait crypt discard,noauto_da_alloc,data=ordered,user_xattr,discard,barrier=1
 	
@@ -293,9 +293,7 @@ on boot
 
 
     write /proc/sys/kernel/hung_task_panic 1
-    write /proc/sys/kernel/hung_task_timeout_secs 120
-    write /sys/kernel/hungtask/monitorlist "whitelist,system_server,surfaceflinger"
-    write /sys/kernel/hungtask/enable "on"
+    write /proc/sys/kernel/hung_task_timeout_secs 30
 
      write /proc/sys/net/core/rps_sock_flow_entries 0
      write /sys/class/net/rmnet0/queues/rx-0/rps_flow_cnt 0
@@ -327,16 +325,14 @@ service kerneldump /system/etc/kerneldump.sh
     oneshot
     
 service ccorecat /system/bin/dmesgcat -i /dev/log/ccore -e s -r 4096 -z 2 -n 5 -f /data/hisi_logs/cp_log/coredump/ccorecat-log
-    class late_start
+    class main
     user root
     group system
-    disabled
 
 service telemntncat /system/bin/dmesgcat -i /proc/telemntn -e b -r 10240 -z 3 -n 1 -f /data/hisi_logs/ap_log/telemntncat-log
-    class late_start
+    class main
     user root
     group system
-    disabled
 
 	
 service exch /system/etc/log/android_panic.sh
