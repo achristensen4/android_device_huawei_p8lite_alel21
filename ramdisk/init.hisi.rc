@@ -107,7 +107,6 @@ service ril-daemon /system/bin/rild
     group radio cache inet misc audio sdcard_r sdcard_rw log system dsm irda
 
 service ril-daemon1 /system/bin/rild -c 1
-    disabled
     class main
     socket rild2 stream 660 root radio
     socket rild-debug1 stream 660 radio system
