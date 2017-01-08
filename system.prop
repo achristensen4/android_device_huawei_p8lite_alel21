@@ -2,13 +2,13 @@
 # system.prop for p8litekirin
 #
 
-dalvik.vm.heapsize=512m
+dalvik.vm.heapsize=42m
 ro.opengles.version=131072
-debug.hwui.render_dirty_regions=false
+debug.hwui.render_dirty_regions=true
 ro.balong_debug.port_num=7
 ro.sf.lcd_density=320
 hw.lcd.density=320
-dalvik.vm.checkjni=false
+dalvik.vm.checkjni=true
 persist.sys.strictmode.disable=true
 ro.product.platform.pseudonym=1ARB9CV
 ro.hwui.texture_cache_size=72
@@ -25,7 +25,7 @@ ro.hwui.text_small_cache_width=1024
 ro.hwui.r_buffer_cache_size=8
 ro.sys.umsdirtyratio=2
 ro.config.hw_music_lp=true
-keyguard.no_require_sim=true
+keyguard.no_require_sim=false
 bastet.service.enable=true
 ro.config.keypasstouser=true
 ro.projectmenu.chargeminlevel=58
